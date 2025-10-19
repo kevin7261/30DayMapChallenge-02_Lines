@@ -274,7 +274,7 @@
           style: () => {
             return {
               color: 'white', // 所有時候都是白色
-              weight: 8, // 線寬改為8px
+              weight: 1, // 線寬改為8px
               opacity: 0.8,
               lineCap: 'square', // 直角線端
               lineJoin: 'miter', // 直角連接
@@ -485,38 +485,6 @@
   <div id="map-container" class="h-100 w-100 position-relative bg-transparent z-0">
     <!-- 🗺️ Leaflet 地圖容器 -->
     <div :id="mapContainerId" ref="mapContainer" class="h-100 w-100"></div>
-
-    <!-- 📱 IG 截圖框框 -->
-    <div
-      class="position-absolute top-50 start-50 translate-middle"
-      style="z-index: 1000; pointer-events: none"
-    >
-      <!-- 貼文尺寸框 (4:5) -->
-      <div
-        class="position-absolute top-50 start-50 translate-middle bg-transparent d-flex flex-column align-items-center justify-content-center"
-        style="
-          width: calc(80vw - 32px);
-          height: calc(100vw - 32px);
-          max-width: calc(80vh - 32px);
-          max-height: calc(100vh - 32px);
-          z-index: 1001;
-          border: 1px solid var(--my-color-gray-200);
-        "
-      >
-        <div class="position-absolute top-0 start-50 translate-middle-x text-center pt-3">
-          <div class="my-font-sm-white">the axis of</div>
-          <div class="my-font-lg-white">{{ currentCity }}</div>
-        </div>
-        <div class="position-absolute bottom-0 start-50 translate-middle-x w-100">
-          <div class="d-flex align-items-center justify-content-center">
-            <span class="my-font-lg-white">02</span>
-            <span class="my-bgcolor-white mx-3" style="width: 2px; height: 28px"></span>
-            <span class="my-font-lg-white">Lines</span>
-          </div>
-          <div class="my-font-sm-white text-center pb-3">#30DayMapChallenge</div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
