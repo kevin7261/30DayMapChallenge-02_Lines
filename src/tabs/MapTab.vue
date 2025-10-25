@@ -177,55 +177,31 @@
 
       /**
        * 🎨 創建要素圖層
-       * 將嵌入的 GeoJSON 數據轉換為 Leaflet 圖層
+       * 在 coordinates 的兩個端點創建紅點標記
        */
       const createFeatureLayer = (layer) => {
         if (!layer.coordinates || layer.coordinates.length < 2) return null;
 
-        const { layerName } = layer;
+        // 創建圖層組，用於包含多個點標記
+        const layerGroup = L.layerGroup([]);
 
-        // 創建 LineString GeoJSON 數據
-        const geoJsonData = {
-          type: 'FeatureCollection',
-          features: [
-            {
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: layer.coordinates,
-              },
-            },
-          ],
-        };
+        // 為每個座標點創建紅色圓形標記
+        layer.coordinates.forEach((coord) => {
+          const [lng, lat] = coord;
 
-        const geoJsonLayer = L.geoJSON(geoJsonData, {
-          // 樣式設定函數 - 處理 LineString
-          style: () => {
-            return {
-              color: 'red', // 紅色線條
-              weight: 1, // 線寬
-              opacity: 1,
-            };
-          },
-          // 每個要素的處理函數
-          onEachFeature: (feature, layer) => {
-            // 綁定彈窗
-            layer.bindPopup(`
-              <div class="p-2">
-                <div class="mb-2">${layerName}</div>
-                <div>街道線條</div>
-              </div>
-            `);
+          // 創建紅色圓形標記
+          const circleMarker = L.circleMarker([lat, lng], {
+            radius: 2, // 圓點半徑
+            fillColor: 'red', // 填充顏色
+            fillOpacity: 1, // 填充不透明度
+            stroke: false, // 不顯示邊框
+          });
 
-            // 綁定點擊事件
-            layer.on('click', () => {
-              emit('feature-selected', feature);
-            });
-          },
+          // 將標記添加到圖層組
+          layerGroup.addLayer(circleMarker);
         });
 
-        return geoJsonLayer;
+        return layerGroup;
       };
 
       /**
