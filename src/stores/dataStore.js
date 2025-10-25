@@ -32,7 +32,7 @@ export const useDataStore = defineStore(
      *   - layerId: 圖層唯一標識符
      *   - layerName: 圖層顯示名稱
      *   - zoom: 縮放級別
-     *   - geoJsonData: 嵌入的 GeoJSON 地理數據（中心點從線條兩端點計算）
+     *   - coordinates: 街道線條的兩個端點座標 [起點, 終點]
      */
     const layers = ref([
       {
@@ -55,110 +55,50 @@ export const useDataStore = defineStore(
             layerId: 'Beijing', // 圖層唯一標識符
             layerName: 'BEIJING', // 圖層顯示名稱
             zoom: 12, // 最佳縮放級別
-            geoJsonData: {
-              type: 'FeatureCollection',
-              features: [
-                {
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
-                    coordinates: [
-                      [116.39637957256002, 39.80351256231435],
-                      [116.38618671648146, 40.012091717672405],
-                    ],
-                    type: 'LineString',
-                  },
-                },
-              ],
-            },
+            coordinates: [
+              [116.39637957256002, 39.80351256231435],
+              [116.38618671648146, 40.012091717672405],
+            ],
           },
           {
             // 🏛️ 羅馬圖層配置
             layerId: 'Rome', // 圖層唯一標識符
             layerName: 'ROME', // 圖層顯示名稱
             zoom: 14, // 最佳縮放級別
-            geoJsonData: {
-              type: 'FeatureCollection',
-              features: [
-                {
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
-                    coordinates: [
-                      [12.467227004214806, 41.93300140114903],
-                      [12.483219652625365, 41.89425990038757],
-                    ],
-                    type: 'LineString',
-                  },
-                },
-              ],
-            },
+            coordinates: [
+              [12.467227004214806, 41.93300140114903],
+              [12.483219652625365, 41.89425990038757],
+            ],
           },
           {
             // 🏛️ 巴黎圖層配置
             layerId: 'Paris', // 圖層唯一標識符
             layerName: 'PARIS', // 圖層顯示名稱
             zoom: 13, // 最佳縮放級別
-            geoJsonData: {
-              type: 'FeatureCollection',
-              features: [
-                {
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
-                    coordinates: [
-                      [2.33334539087744, 48.86160021235486],
-                      [2.2188966642140713, 48.89782995675384],
-                    ],
-                    type: 'LineString',
-                  },
-                },
-              ],
-            },
+            coordinates: [
+              [2.33334539087744, 48.86160021235486],
+              [2.2188966642140713, 48.89782995675384],
+            ],
           },
           {
             // 🏛️ 華盛頓圖層配置
             layerId: 'Washington', // 圖層唯一標識符
             layerName: 'WASHINGTON', // 圖層顯示名稱
             zoom: 13, // 最佳縮放級別
-            geoJsonData: {
-              type: 'FeatureCollection',
-              features: [
-                {
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
-                    coordinates: [
-                      [-77.05013839452597, 38.88929463507836],
-                      [-76.9133749343309, 38.88976503523864],
-                    ],
-                    type: 'LineString',
-                  },
-                },
-              ],
-            },
+            coordinates: [
+              [-77.05013839452597, 38.88929463507836],
+              [-76.9133749343309, 38.88976503523864],
+            ],
           },
           {
             // 🏛️ 柏林圖層配置
             layerId: 'Berlin', // 圖層唯一標識符
             layerName: 'BERLIN', // 圖層顯示名稱
             zoom: 13, // 最佳縮放級別
-            geoJsonData: {
-              type: 'FeatureCollection',
-              features: [
-                {
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
-                    coordinates: [
-                      [13.229711365656641, 52.50673639566284],
-                      [13.399053707740194, 52.51765971170866],
-                    ],
-                    type: 'LineString',
-                  },
-                },
-              ],
-            },
+            coordinates: [
+              [13.229711365656641, 52.50673639566284],
+              [13.399053707740194, 52.51765971170866],
+            ],
           },
         ],
       },
@@ -278,21 +218,18 @@ export const useDataStore = defineStore(
         return;
       }
 
-      // 從 GeoJSON 數據計算街道線條中心點
+      // 從座標數據計算街道線條中心點
       let targetCenter = null;
       const optimalZoom = cityLayer.zoom || 11;
 
-      if (cityLayer.geoJsonData?.features?.[0]?.geometry?.coordinates) {
-        const coordinates = cityLayer.geoJsonData.features[0].geometry.coordinates;
-        if (coordinates.length >= 2) {
-          // 計算兩點連線的中間點
-          const [lng1, lat1] = coordinates[0];
-          const [lng2, lat2] = coordinates[1];
-          const centerLng = (lng1 + lng2) / 2;
-          const centerLat = (lat1 + lat2) / 2;
-          targetCenter = [centerLat, centerLng]; // Leaflet 需要 [lat, lng] 格式
-          console.log('📍 導航到城市:', cityLayer.layerName, '計算的中心點:', targetCenter);
-        }
+      if (cityLayer.coordinates && cityLayer.coordinates.length >= 2) {
+        // 計算兩點連線的中間點
+        const [lng1, lat1] = cityLayer.coordinates[0];
+        const [lng2, lat2] = cityLayer.coordinates[1];
+        const centerLng = (lng1 + lng2) / 2;
+        const centerLat = (lat1 + lat2) / 2;
+        targetCenter = [centerLat, centerLng]; // Leaflet 需要 [lat, lng] 格式
+        console.log('📍 導航到城市:', cityLayer.layerName, '計算的中心點:', targetCenter);
       }
 
       if (!targetCenter) {

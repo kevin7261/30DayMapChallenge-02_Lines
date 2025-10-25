@@ -199,11 +199,26 @@
        * 將嵌入的 GeoJSON 數據轉換為 Leaflet 圖層
        */
       const createFeatureLayer = (layer) => {
-        if (!layer.geoJsonData) return null;
+        if (!layer.coordinates || layer.coordinates.length < 2) return null;
 
         const { layerName } = layer;
 
-        const geoJsonLayer = L.geoJSON(layer.geoJsonData, {
+        // 創建 LineString GeoJSON 數據
+        const geoJsonData = {
+          type: 'FeatureCollection',
+          features: [
+            {
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: layer.coordinates,
+              },
+            },
+          ],
+        };
+
+        const geoJsonLayer = L.geoJSON(geoJsonData, {
           // 樣式設定函數 - 處理 LineString
           style: () => {
             return {
@@ -271,7 +286,7 @@
         allLayers.forEach((layer) => {
           const layerId = layer.layerId;
 
-          if (layer.geoJsonData) {
+          if (layer.coordinates && layer.coordinates.length >= 2) {
             // 顯示圖層
             if (!layerGroups[layerId]) {
               const geoJsonLayer = createFeatureLayer(layer);
