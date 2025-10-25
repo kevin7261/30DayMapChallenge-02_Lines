@@ -42,39 +42,16 @@ export const useDefineStore = defineStore('define', {
         maxZoom: 20,
       },
       {
+        label: 'Google 街道圖',
+        value: 'google_roadmap',
+        url: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+        attribution: '© Google',
+        maxZoom: 20,
+      },
+      {
         label: 'Carto Dark',
         value: 'carto_dark',
         url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-      },
-      {
-        label: '紅色主題地圖',
-        value: 'red_theme',
-        url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-      },
-      {
-        label: '藍色主題地圖',
-        value: 'blue_theme',
-        url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-      },
-      {
-        label: '綠色主題地圖',
-        value: 'green_theme',
-        url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-      },
-      {
-        label: '紫色主題地圖',
-        value: 'purple_theme',
-        url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-      },
-      {
-        label: '橙色主題地圖',
-        value: 'orange_theme',
-        url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-      },
-      {
-        label: '黃色主題地圖',
-        value: 'yellow_theme',
-        url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
       },
     ],
   }),

@@ -178,7 +178,11 @@
           };
 
           // 為 Google Maps 圖層添加特殊配置
-          if (config.value === 'google_satellite' || config.value === 'google_hybrid') {
+          if (
+            config.value === 'google_satellite' ||
+            config.value === 'google_hybrid' ||
+            config.value === 'google_roadmap'
+          ) {
             tileOptions.subdomains = ['mt0', 'mt1', 'mt2', 'mt3'];
             tileOptions.detectRetina = true;
           }
@@ -193,23 +197,7 @@
         if (mapContainerElement) {
           console.log('🎨 設定底圖背景色:', defineStore.selectedBasemap);
 
-          const allBgClasses = [
-            'my-map-bg-blank',
-            'my-map-bg-black',
-            'my-map-bg-red-theme',
-            'my-map-bg-blue-theme',
-            'my-map-bg-green-theme',
-            'my-map-bg-purple-theme',
-            'my-map-bg-lightblue-theme',
-            'my-map-bg-yellow-theme',
-            'my-map-bg-city-beijing-theme',
-            'my-map-bg-city-xian-theme',
-            'my-map-bg-city-paris-theme',
-            'my-map-bg-city-berlin-theme',
-            'my-map-bg-city-rome-theme',
-            'my-map-bg-city-washington-theme',
-            'my-map-bg-transparent',
-          ];
+          const allBgClasses = ['my-map-bg-blank', 'my-map-bg-black', 'my-map-bg-transparent'];
 
           // 移除所有背景顏色類別（內外容器都處理）
           [mapContainerElement, mapRootElement].forEach((el) => {
@@ -222,22 +210,11 @@
             // Google Maps 底圖使用透明背景
             google_satellite: 'my-map-bg-transparent',
             google_hybrid: 'my-map-bg-transparent',
+            google_roadmap: 'my-map-bg-transparent',
             // 其他底圖
             blank: 'my-map-bg-blank',
             black: 'my-map-bg-black',
-            red_theme: 'my-map-bg-red-theme',
-            blue_theme: 'my-map-bg-blue-theme',
-            green_theme: 'my-map-bg-green-theme',
-            purple_theme: 'my-map-bg-purple-theme',
-            orange_theme: 'my-map-bg-lightblue-theme',
-            yellow_theme: 'my-map-bg-yellow-theme',
-            // 城市專用顏色主題
-            'city-beijing_theme': 'my-map-bg-city-beijing-theme',
-            'city-xian_theme': 'my-map-bg-city-xian-theme',
-            'city-paris_theme': 'my-map-bg-city-paris-theme',
-            'city-berlin_theme': 'my-map-bg-city-berlin-theme',
-            'city-rome_theme': 'my-map-bg-city-rome-theme',
-            'city-washington_theme': 'my-map-bg-city-washington-theme',
+            carto_dark: 'my-map-bg-black',
           };
 
           const bgClass = basemapClassMap[defineStore.selectedBasemap] || 'my-map-bg-transparent';
