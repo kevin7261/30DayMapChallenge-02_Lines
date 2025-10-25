@@ -199,20 +199,15 @@ export const useDataStore = defineStore(
       // 查找城市圖層
       const cityLayer = findLayerById(cityId);
       if (!cityLayer) {
-        console.error('❌ 找不到城市圖層:', cityId);
         return;
       }
 
       // 檢查地圖實例是否準備就緒
       if (!mapInstance.value) {
-        console.error('❌ 地圖實例未準備就緒，等待地圖初始化...');
         // 延遲重試機制
         setTimeout(() => {
           if (mapInstance.value) {
-            console.log('🌍 地圖已準備就緒，重新嘗試移動');
             navigateToCity(cityId);
-          } else {
-            console.error('❌ 地圖實例仍未準備就緒');
           }
         }, 1000);
         return;
@@ -229,20 +224,17 @@ export const useDataStore = defineStore(
         const centerLng = (lng1 + lng2) / 2;
         const centerLat = (lat1 + lat2) / 2;
         targetCenter = [centerLat, centerLng]; // Leaflet 需要 [lat, lng] 格式
-        console.log('📍 導航到城市:', cityLayer.layerName, '計算的中心點:', targetCenter);
       }
 
       if (!targetCenter) {
-        console.error('❌ 無法計算城市中心點:', cityId);
         return;
       }
 
       // 執行地圖導航
       try {
         mapInstance.value.setView(targetCenter, optimalZoom, { animate: false });
-        console.log(`🌍 成功導航到城市: ${cityLayer.layerName}`);
       } catch (error) {
-        console.error('❌ 地圖導航失敗:', error);
+        // 地圖導航失敗，靜默處理
       }
     };
 

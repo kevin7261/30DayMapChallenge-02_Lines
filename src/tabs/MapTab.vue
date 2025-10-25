@@ -43,31 +43,18 @@
       const isMapReady = ref(false);
       const mapContainerId = ref(`leaflet-map-${Math.random().toString(36).substr(2, 9)}`);
 
-      // 📊 計算屬性：檢查是否有任何圖層可見
-      const isAnyLayerVisible = computed(() => dataStore.getAllLayers().some((l) => l.geoJsonData));
-
       // 🏙️ 當前城市信息
       const currentCityInfo = computed(() => {
         if (!props.currentCity) {
-          console.log('❌ currentCityInfo: 沒有當前城市');
           return null;
         }
 
         // 從dataStore中獲取城市信息
         const allLayers = dataStore.getAllLayers();
-        console.log(
-          '🔍 查找城市:',
-          props.currentCity,
-          '可用圖層:',
-          allLayers.map((l) => l.layerName)
-        );
-
         const cityLayer = allLayers.find((layer) => layer.layerName === props.currentCity);
         if (cityLayer) {
-          console.log('✅ 找到城市圖層:', cityLayer.layerName);
           return {};
         } else {
-          console.log('❌ 未找到城市圖層:', props.currentCity);
           return null;
         }
       });
@@ -81,7 +68,6 @@
 
         const rect = mapContainer.value.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) {
-          console.warn('[MapTab] 容器尺寸為零，延遲初始化');
           return false;
         }
 
@@ -107,7 +93,6 @@
           mapInstance.on('click', function (e) {
             if (!e.originalEvent.target.closest('.leaflet-interactive')) {
               dataStore.setSelectedFeature(null);
-              resetAllLayerStyles();
             }
           });
 
@@ -117,10 +102,8 @@
           isMapReady.value = true;
           emit('map-ready', mapInstance);
 
-          console.log('[MapTab] 地圖創建成功');
           return true;
         } catch (error) {
-          console.error('[MapTab] 地圖創建失敗:', error);
           return false;
         }
       };
@@ -176,8 +159,6 @@
         const mapContainerElement = mapContainer.value;
         const mapRootElement = mapContainerElement ? mapContainerElement.parentElement : null;
         if (mapContainerElement) {
-          console.log('🎨 設定 Google Maps 衛星圖底圖');
-
           const allBgClasses = ['my-map-bg-blank', 'my-map-bg-black', 'my-map-bg-transparent'];
 
           // 移除所有背景顏色類別
@@ -240,36 +221,11 @@
             // 綁定點擊事件
             layer.on('click', () => {
               emit('feature-selected', feature);
-              highlightFeature(feature);
             });
           },
         });
 
         return geoJsonLayer;
-      };
-
-      /**
-       * 🎯 高亮顯示特定要素
-       * 當用戶點擊地圖要素時高亮顯示
-       */
-      const highlightFeature = (feature) => {
-        // 重置所有圖層樣式
-        resetAllLayerStyles();
-
-        // 高亮選中的要素
-        if (feature && feature._leaflet_id) {
-          // 這裡可以添加高亮邏輯
-          console.log('高亮要素:', feature.properties.name);
-        }
-      };
-
-      /**
-       * 🔄 重置所有圖層樣式
-       * 清除所有高亮效果
-       */
-      const resetAllLayerStyles = () => {
-        // 這裡可以添加重置樣式的邏輯
-        console.log('重置圖層樣式');
       };
 
       /**
@@ -291,7 +247,6 @@
               if (geoJsonLayer) {
                 layerGroups[layerId] = geoJsonLayer;
                 mapInstance.addLayer(geoJsonLayer);
-                console.log(`✅ 添加圖層: ${layer.layerName}`);
               }
             }
           } else {
@@ -326,15 +281,12 @@
 
         const tryCreateMap = () => {
           if (attempts >= maxAttempts) {
-            console.error('[MapTab] 地圖初始化失敗，已達到最大嘗試次數');
             return;
           }
 
           attempts++;
-          console.log(`[MapTab] 嘗試創建地圖 (${attempts}/${maxAttempts})`);
 
           if (createMap()) {
-            console.log('[MapTab] 地圖創建成功，開始初始化');
             setBasemap();
             syncLayers();
 
@@ -346,12 +298,10 @@
                 if (geoJsonLayer) {
                   layerGroups['Xian'] = geoJsonLayer;
                   mapInstance.addLayer(geoJsonLayer);
-                  console.log('✅ 預設顯示西安街道線條');
                 }
               }
             }, 500);
           } else {
-            console.log('[MapTab] 地圖創建失敗，100ms 後重試');
             setTimeout(tryCreateMap, 100);
           }
         };
@@ -372,13 +322,11 @@
           }
 
           resizeTimeout = setTimeout(() => {
-            console.log('🔄 容器大小變化，刷新地圖');
             invalidateSize();
           }, 200);
         });
 
         resizeObserver.observe(mapContainer.value);
-        console.log('✅ ResizeObserver 已設置');
       };
 
       // 🧹 生命週期：組件掛載
@@ -416,9 +364,7 @@
       return {
         mapContainer,
         mapContainerId,
-        isAnyLayerVisible,
         currentCityInfo,
-        highlightFeature,
         invalidateSize,
         defineStore,
       };
