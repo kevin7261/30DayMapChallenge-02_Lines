@@ -172,10 +172,18 @@
           // 不添加任何底圖圖層
         } else if (config && config.url) {
           // 一般底圖：添加底圖圖層
-          currentTileLayer = L.tileLayer(config.url, {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 18,
-          });
+          const tileOptions = {
+            attribution: config.attribution || '© OpenStreetMap contributors',
+            maxZoom: config.maxZoom || 18,
+          };
+
+          // 為 Google Maps 圖層添加特殊配置
+          if (config.value === 'google_satellite' || config.value === 'google_hybrid') {
+            tileOptions.subdomains = ['mt0', 'mt1', 'mt2', 'mt3'];
+            tileOptions.detectRetina = true;
+          }
+
+          currentTileLayer = L.tileLayer(config.url, tileOptions);
           mapInstance.addLayer(currentTileLayer);
         }
 
@@ -211,6 +219,10 @@
 
           // 根據底圖類型添加對應的 CSS 類別
           const basemapClassMap = {
+            // Google Maps 底圖使用透明背景
+            google_satellite: 'my-map-bg-transparent',
+            google_hybrid: 'my-map-bg-transparent',
+            // 其他底圖
             blank: 'my-map-bg-blank',
             black: 'my-map-bg-black',
             red_theme: 'my-map-bg-red-theme',

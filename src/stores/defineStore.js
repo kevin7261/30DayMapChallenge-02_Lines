@@ -18,7 +18,7 @@ import { defineStore } from 'pinia';
 export const useDefineStore = defineStore('define', {
   state: () => ({
     // 🗺️ 當前選中的底圖類型
-    selectedBasemap: 'city-xian_theme',
+    selectedBasemap: 'google_satellite',
 
     // 🗺️ 地圖視圖狀態
     mapView: {
@@ -27,6 +27,20 @@ export const useDefineStore = defineStore('define', {
     },
     // 🗺️ 底圖配置列表
     basemaps: [
+      {
+        label: 'Google 衛星圖',
+        value: 'google_satellite',
+        url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+        attribution: '© Google',
+        maxZoom: 20,
+      },
+      {
+        label: 'Google 混合圖',
+        value: 'google_hybrid',
+        url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+        attribution: '© Google',
+        maxZoom: 20,
+      },
       {
         label: 'Carto Dark',
         value: 'carto_dark',
