@@ -222,11 +222,9 @@
           // 樣式設定函數 - 處理 LineString
           style: () => {
             return {
-              color: 'white', // 白色線條
-              weight: 2, // 線寬
-              opacity: 0.8,
-              lineCap: 'round', // 圓角線端
-              lineJoin: 'round', // 圓角連接
+              color: 'red', // 紅色線條
+              weight: 1, // 線寬
+              opacity: 1,
             };
           },
           // 每個要素的處理函數
@@ -339,6 +337,19 @@
             console.log('[MapTab] 地圖創建成功，開始初始化');
             setBasemap();
             syncLayers();
+            
+            // 預設顯示西安的街道線條
+            setTimeout(() => {
+              const xianLayer = dataStore.findLayerById('Xian');
+              if (xianLayer && xianLayer.coordinates) {
+                const geoJsonLayer = createFeatureLayer(xianLayer);
+                if (geoJsonLayer) {
+                  layerGroups['Xian'] = geoJsonLayer;
+                  mapInstance.addLayer(geoJsonLayer);
+                  console.log('✅ 預設顯示西安街道線條');
+                }
+              }
+            }, 500);
           } else {
             console.log('[MapTab] 地圖創建失敗，100ms 後重試');
             setTimeout(tryCreateMap, 100);
