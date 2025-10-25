@@ -151,8 +151,8 @@
       };
 
       /**
-       * 🎨 設定底圖
-       * 根據存儲中的設定載入對應的底圖圖層
+       * 🎨 設定 Google Maps 衛星圖底圖
+       * 固定使用 Google Maps 衛星圖作為底圖
        */
       const setBasemap = () => {
         if (!mapInstance) return;
@@ -162,111 +162,56 @@
           mapInstance.removeLayer(currentTileLayer);
         }
 
-        const config = defineStore.basemaps.find((b) => b.value === defineStore.selectedBasemap);
+        // 添加 Google Maps 衛星圖圖層
+        const config = defineStore.googleSatelliteConfig;
+        currentTileLayer = L.tileLayer(config.url, {
+          attribution: config.attribution,
+          maxZoom: config.maxZoom,
+          subdomains: config.subdomains,
+          detectRetina: config.detectRetina,
+        });
+        mapInstance.addLayer(currentTileLayer);
 
-        // 檢查是否為顏色主題地圖
-        const isColorTheme = defineStore.selectedBasemap.endsWith('_theme');
-
-        if (isColorTheme) {
-          // 顏色主題地圖：不添加底圖圖層，只設定背景色
-          // 不添加任何底圖圖層
-        } else if (config && config.url) {
-          // 一般底圖：添加底圖圖層
-          const tileOptions = {
-            attribution: config.attribution || '© OpenStreetMap contributors',
-            maxZoom: config.maxZoom || 18,
-          };
-
-          // 為 Google Maps 圖層添加特殊配置
-          if (
-            config.value === 'google_satellite' ||
-            config.value === 'google_hybrid' ||
-            config.value === 'google_roadmap'
-          ) {
-            tileOptions.subdomains = ['mt0', 'mt1', 'mt2', 'mt3'];
-            tileOptions.detectRetina = true;
-          }
-
-          currentTileLayer = L.tileLayer(config.url, tileOptions);
-          mapInstance.addLayer(currentTileLayer);
-        }
-
-        // 設定容器背景色（同時套用在地圖容器與其父容器）
+        // 設定容器背景為透明，讓衛星圖顯示
         const mapContainerElement = mapContainer.value;
-        const mapRootElement = mapContainerElement ? mapContainerElement.parentElement : null; // #map-container
+        const mapRootElement = mapContainerElement ? mapContainerElement.parentElement : null;
         if (mapContainerElement) {
-          console.log('🎨 設定底圖背景色:', defineStore.selectedBasemap);
+          console.log('🎨 設定 Google Maps 衛星圖底圖');
 
           const allBgClasses = ['my-map-bg-blank', 'my-map-bg-black', 'my-map-bg-transparent'];
 
-          // 移除所有背景顏色類別（內外容器都處理）
+          // 移除所有背景顏色類別
           [mapContainerElement, mapRootElement].forEach((el) => {
             if (!el) return;
             el.classList.remove(...allBgClasses);
           });
 
-          // 根據底圖類型添加對應的 CSS 類別
-          const basemapClassMap = {
-            // Google Maps 底圖使用透明背景
-            google_satellite: 'my-map-bg-transparent',
-            google_hybrid: 'my-map-bg-transparent',
-            google_roadmap: 'my-map-bg-transparent',
-            // 其他底圖
-            blank: 'my-map-bg-blank',
-            black: 'my-map-bg-black',
-            carto_dark: 'my-map-bg-black',
-          };
-
-          const bgClass = basemapClassMap[defineStore.selectedBasemap] || 'my-map-bg-transparent';
-
-          // 內外容器都加入背景類別，確保顏色可見
+          // 設定透明背景
           [mapContainerElement, mapRootElement].forEach((el) => {
             if (!el) return;
-            el.classList.add(bgClass);
+            el.classList.add('my-map-bg-transparent');
           });
         }
       };
 
       /**
        * 🎨 創建要素圖層
-       * 將 GeoJSON 數據轉換為 Leaflet 圖層
+       * 將嵌入的 GeoJSON 數據轉換為 Leaflet 圖層
        */
       const createFeatureLayer = (layer) => {
         if (!layer.geoJsonData) return null;
 
-        const { layerName, colorName } = layer;
+        const { layerName } = layer;
 
         const geoJsonLayer = L.geoJSON(layer.geoJsonData, {
-          // 點要素轉換函數
-          pointToLayer: (feature, latlng) => {
-            if (feature.geometry.type === 'Point') {
-              const icon = L.divIcon({
-                html: `<div
-                 class="rounded-circle"
-                 style="
-                    background-color: var(--my-color-${colorName});
-                    width: 8px;
-                    height: 8px;
-                    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-                  ">
-                  </div>`,
-                className: 'custom-point-icon',
-                iconSize: [8, 8],
-                iconAnchor: [4, 4],
-                popupAnchor: [0, -4],
-              });
-              return L.marker(latlng, { icon });
-            }
-            return L.marker(latlng);
-          },
-          // 樣式設定函數 - 只處理 LineString
+          // 樣式設定函數 - 處理 LineString
           style: () => {
             return {
-              color: 'white', // 所有時候都是白色
-              weight: 1, // 線寬改為8px
+              color: 'white', // 白色線條
+              weight: 2, // 線寬
               opacity: 0.8,
-              lineCap: 'square', // 直角線端
-              lineJoin: 'miter', // 直角連接
+              lineCap: 'round', // 圓角線端
+              lineJoin: 'round', // 圓角連接
             };
           },
           // 每個要素的處理函數
@@ -275,9 +220,9 @@
             layer.bindPopup(`
               <div class="p-2">
                 <div class="mb-2">${layerName}</div>
-                <div>${feature.properties.name || '未命名'}</div>
-                 </div>
-               `);
+                <div>街道線條</div>
+              </div>
+            `);
 
             // 綁定點擊事件
             layer.on('click', () => {
@@ -333,6 +278,7 @@
               if (geoJsonLayer) {
                 layerGroups[layerId] = geoJsonLayer;
                 mapInstance.addLayer(geoJsonLayer);
+                console.log(`✅ 添加圖層: ${layer.layerName}`);
               }
             }
           } else {
@@ -378,11 +324,6 @@
             console.log('[MapTab] 地圖創建成功，開始初始化');
             setBasemap();
             syncLayers();
-
-            // 延遲載入城市圖層
-            setTimeout(() => {
-              dataStore.loadCityLayers();
-            }, 1000);
           } else {
             console.log('[MapTab] 地圖創建失敗，100ms 後重試');
             setTimeout(tryCreateMap, 100);
@@ -444,16 +385,6 @@
 
       // 👀 監聽器：監聽資料存儲中的圖層變化
       watch(() => dataStore.layers, syncLayers, { deep: true });
-
-      // 👀 監聽器：監聽底圖變化
-      watch(
-        () => defineStore.selectedBasemap,
-        () => {
-          if (isMapReady.value) {
-            setBasemap();
-          }
-        }
-      );
 
       // 📤 返回組件公開的屬性和方法
       return {

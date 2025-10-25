@@ -8,9 +8,6 @@
 // 核心依賴
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import L from 'leaflet';
-import { loadCityGeoJson } from '../utils/dataProcessor.js';
-import { useDefineStore } from './defineStore.js';
 
 /**
  * 🏪 數據存儲商店定義 (Data Store Definition)
@@ -34,13 +31,8 @@ export const useDataStore = defineStore(
      * - groupLayers: 該組下的所有圖層列表
      *   - layerId: 圖層唯一標識符
      *   - layerName: 圖層顯示名稱
-     *   - colorName: 圖層顏色名稱（對應 CSS 變數）
-     *   - geoJsonData: GeoJSON 格式的地理數據
-     *   - loader: 數據載入函數
-     *   - fileName: 數據文件路徑
-     *   - fieldName: 主要字段名稱
-     *   - center: 城市中心座標
      *   - zoom: 縮放級別
+     *   - geoJsonData: 嵌入的 GeoJSON 地理數據（中心點從線條兩端點計算）
      */
     const layers = ref([
       {
@@ -52,79 +44,121 @@ export const useDataStore = defineStore(
             // 🏛️ 西安圖層配置
             layerId: 'Xian', // 圖層唯一標識符
             layerName: "XI'AN", // 圖層顯示名稱
-            colorName: 'city-xian', // 金黃色主題 - 代表中國古代帝王色彩
-            geoJsonData: null, // GeoJSON 地理數據（載入後填充）
-            loader: loadCityGeoJson, // 數據載入函數
-            fileName: 'xian.geojson', // 數據文件路徑
-            fieldName: null, // 主要字段名稱（可選）
-            center: [108.9402, 34.3416], // 西安中心座標
             zoom: 12, // 最佳縮放級別
-            boundsCenter: null, // 緩存的邊界框中心點（性能優化）
+            coordinates: [
+              [108.94187642402278, 34.192881967113934],
+              [108.94258912558922, 34.34966320467116],
+            ],
           },
           {
             // 🏛️ 北京圖層配置
             layerId: 'Beijing', // 圖層唯一標識符
             layerName: 'BEIJING', // 圖層顯示名稱
-            colorName: 'city-beijing', // 深藍色主題 - 代表中國傳統色彩
-            geoJsonData: null, // GeoJSON 地理數據（載入後填充）
-            loader: loadCityGeoJson, // 數據載入函數
-            fileName: 'beijing.geojson', // 數據文件路徑
-            fieldName: null, // 主要字段名稱（可選）
-            center: [116.4074, 39.9042], // 北京中心座標
-            zoom: 11, // 最佳縮放級別
-            boundsCenter: null, // 緩存的邊界框中心點（性能優化）
+            zoom: 12, // 最佳縮放級別
+            geoJsonData: {
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  properties: {},
+                  geometry: {
+                    coordinates: [
+                      [116.39637957256002, 39.80351256231435],
+                      [116.38618671648146, 40.012091717672405],
+                    ],
+                    type: 'LineString',
+                  },
+                },
+              ],
+            },
           },
           {
             // 🏛️ 羅馬圖層配置
             layerId: 'Rome', // 圖層唯一標識符
             layerName: 'ROME', // 圖層顯示名稱
-            colorName: 'city-rome', // 粉紅色主題 - 代表義大利浪漫色彩
-            geoJsonData: null, // GeoJSON 地理數據（載入後填充）
-            loader: loadCityGeoJson, // 數據載入函數
-            fileName: 'rome.geojson', // 數據文件路徑
-            fieldName: null, // 主要字段名稱（可選）
-            center: [12.4964, 41.9028], // 羅馬中心座標
             zoom: 14, // 最佳縮放級別
-            boundsCenter: null, // 緩存的邊界框中心點（性能優化）
+            geoJsonData: {
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  properties: {},
+                  geometry: {
+                    coordinates: [
+                      [12.467227004214806, 41.93300140114903],
+                      [12.483219652625365, 41.89425990038757],
+                    ],
+                    type: 'LineString',
+                  },
+                },
+              ],
+            },
           },
           {
             // 🏛️ 巴黎圖層配置
             layerId: 'Paris', // 圖層唯一標識符
             layerName: 'PARIS', // 圖層顯示名稱
-            colorName: 'city-paris', // 淡紫色主題 - 代表法國優雅色彩
-            geoJsonData: null, // GeoJSON 地理數據（載入後填充）
-            loader: loadCityGeoJson, // 數據載入函數
-            fileName: 'paris.geojson', // 數據文件路徑
-            fieldName: null, // 主要字段名稱（可選）
-            center: [2.3522, 48.8566], // 巴黎中心座標
-            zoom: 12, // 最佳縮放級別
-            boundsCenter: null, // 緩存的邊界框中心點（性能優化）
+            zoom: 13, // 最佳縮放級別
+            geoJsonData: {
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  properties: {},
+                  geometry: {
+                    coordinates: [
+                      [2.33334539087744, 48.86160021235486],
+                      [2.2188966642140713, 48.89782995675384],
+                    ],
+                    type: 'LineString',
+                  },
+                },
+              ],
+            },
           },
           {
             // 🏛️ 華盛頓圖層配置
             layerId: 'Washington', // 圖層唯一標識符
             layerName: 'WASHINGTON', // 圖層顯示名稱
-            colorName: 'city-washington', // 青綠色主題 - 代表美國自然色彩
-            geoJsonData: null, // GeoJSON 地理數據（載入後填充）
-            loader: loadCityGeoJson, // 數據載入函數
-            fileName: 'washingtondc.geojson', // 數據文件路徑
-            fieldName: null, // 主要字段名稱（可選）
-            center: [-77.0369, 38.9072], // 華盛頓中心座標
-            zoom: 12, // 最佳縮放級別
-            boundsCenter: null, // 緩存的邊界框中心點（性能優化）
+            zoom: 13, // 最佳縮放級別
+            geoJsonData: {
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  properties: {},
+                  geometry: {
+                    coordinates: [
+                      [-77.05013839452597, 38.88929463507836],
+                      [-76.9133749343309, 38.88976503523864],
+                    ],
+                    type: 'LineString',
+                  },
+                },
+              ],
+            },
           },
           {
             // 🏛️ 柏林圖層配置
             layerId: 'Berlin', // 圖層唯一標識符
             layerName: 'BERLIN', // 圖層顯示名稱
-            colorName: 'city-berlin', // 淺藍色主題 - 代表德國現代色彩
-            geoJsonData: null, // GeoJSON 地理數據（載入後填充）
-            loader: loadCityGeoJson, // 數據載入函數
-            fileName: 'berlin.geojson', // 數據文件路徑
-            fieldName: null, // 主要字段名稱（可選）
-            center: [13.405, 52.52], // 柏林中心座標
-            zoom: 12, // 最佳縮放級別
-            boundsCenter: null, // 緩存的邊界框中心點（性能優化）
+            zoom: 13, // 最佳縮放級別
+            geoJsonData: {
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  properties: {},
+                  geometry: {
+                    coordinates: [
+                      [13.229711365656641, 52.50673639566284],
+                      [13.399053707740194, 52.51765971170866],
+                    ],
+                    type: 'LineString',
+                  },
+                },
+              ],
+            },
           },
         ],
       },
@@ -196,57 +230,6 @@ export const useDataStore = defineStore(
      */
     // 移除圖層可見性切換（城市圖層永久可見，且無需勾選切換）
 
-    /**
-     * 🚀 載入城市圖層數據
-     *
-     * 載入所有城市圖層的GeoJSON數據，並計算長度、角度和邊界框中心點
-     * 如果數據已載入，則重新計算缺失的指標
-     *
-     * @returns {Promise<void>} 異步操作，無返回值
-     */
-    const loadCityLayers = async () => {
-      const cityLayers = layers.value[0].groupLayers; // 獲取城市圖層組
-      console.log('🚀 開始載入城市圖層，總數:', cityLayers.length);
-
-      // 遍歷所有城市圖層
-      for (const layer of cityLayers) {
-        try {
-          if (!layer.geoJsonData) {
-            // 首次載入：從文件載入GeoJSON數據
-            console.log(`📥 載入城市圖層: ${layer.layerName}`);
-            const result = await layer.loader(layer);
-
-            // 儲存載入的數據
-            layer.geoJsonData = result.geoJsonData;
-
-            // 計算並緩存邊界框中心點（用於地圖導航）
-            if (result.geoJsonData?.features?.length > 0) {
-              const bounds = L.geoJSON(result.geoJsonData).getBounds();
-              layer.boundsCenter = bounds.getCenter();
-              console.log(`🎯 緩存邊界框中心點:`, layer.boundsCenter);
-            }
-
-            console.log(`✅ 城市圖層 "${layer.layerName}" 載入完成`);
-            console.log(`   📊 特徵數量: ${result.geoJsonData?.features?.length || 0}`);
-          } else {
-            // 數據已載入：檢查並補齊缺失的指標
-            console.log(`🔄 檢查城市圖層指標: ${layer.layerName}`);
-
-            // 重新計算邊界框中心點（如果缺失）
-            if (!layer.boundsCenter) {
-              const bounds = L.geoJSON(layer.geoJsonData).getBounds();
-              layer.boundsCenter = bounds.getCenter();
-              console.log(`   🎯 重新計算邊界框中心點:`, layer.boundsCenter);
-            }
-          }
-        } catch (error) {
-          console.error(`❌ 處理城市圖層 "${layer.layerName}" 時發生錯誤:`, error);
-        }
-      }
-
-      console.log('🎉 城市圖層載入完成');
-    };
-
     // ------------------------------------------------------------
     // 選中的地圖物件（用於清除選取狀態）
     const selectedFeature = ref(null);
@@ -295,51 +278,26 @@ export const useDataStore = defineStore(
         return;
       }
 
-      // 確定目標位置和縮放級別（按優先級順序）
+      // 從 GeoJSON 數據計算街道線條中心點
       let targetCenter = null;
       const optimalZoom = cityLayer.zoom || 11;
 
-      if (cityLayer.boundsCenter) {
-        // 優先使用緩存的邊界框中心點（性能最佳）
-        targetCenter = cityLayer.boundsCenter;
-        console.log('🎯 使用緩存的邊界框中心點');
-      } else if (cityLayer.geoJsonData?.features?.length > 0) {
-        // 即時計算邊界框中心（較慢但準確）
-        const bounds = L.geoJSON(cityLayer.geoJsonData).getBounds();
-        targetCenter = bounds.getCenter();
-        console.log('📐 即時計算邊界框中心點');
-      } else if (cityLayer.center) {
-        // 使用預設中心點（最慢但最可靠）
-        const [lng, lat] = cityLayer.center;
-        targetCenter = [lat, lng]; // Leaflet 需要 [lat, lng] 格式
-        console.log('📍 使用預設中心點:', targetCenter);
-      } else {
-        console.error('❌ 城市圖層沒有可用的中心座標:', cityId);
-        return;
+      if (cityLayer.geoJsonData?.features?.[0]?.geometry?.coordinates) {
+        const coordinates = cityLayer.geoJsonData.features[0].geometry.coordinates;
+        if (coordinates.length >= 2) {
+          // 計算兩點連線的中間點
+          const [lng1, lat1] = coordinates[0];
+          const [lng2, lat2] = coordinates[1];
+          const centerLng = (lng1 + lng2) / 2;
+          const centerLat = (lat1 + lat2) / 2;
+          targetCenter = [centerLat, centerLng]; // Leaflet 需要 [lat, lng] 格式
+          console.log('📍 導航到城市:', cityLayer.layerName, '計算的中心點:', targetCenter);
+        }
       }
 
-      // 檢查並更新底圖主題（如果當前是顏色主題模式）
-      const defineStoreInstance = useDefineStore();
-      const currentBasemap = defineStoreInstance.selectedBasemap;
-      const isColorTheme = currentBasemap?.endsWith('_theme');
-
-      if (isColorTheme) {
-        // 根據城市顏色切換到對應的顏色主題
-        const colorThemeMap = {
-          'city-beijing': 'city-beijing_theme',
-          'city-xian': 'city-xian_theme',
-          'city-paris': 'city-paris_theme',
-          'city-berlin': 'city-berlin_theme',
-          'city-rome': 'city-rome_theme',
-          'city-washington': 'city-washington_theme',
-        };
-
-        const themeBasemap = colorThemeMap[cityLayer.colorName];
-        if (themeBasemap && themeBasemap !== currentBasemap) {
-          console.log('🎨 切換城市顏色主題:', cityLayer.layerName, '→', themeBasemap);
-          // 直接更新全域設定的底圖，觸發監聽器更新背景
-          defineStoreInstance.selectedBasemap = themeBasemap;
-        }
+      if (!targetCenter) {
+        console.error('❌ 無法計算城市中心點:', cityId);
+        return;
       }
 
       // 執行地圖導航
@@ -355,7 +313,6 @@ export const useDataStore = defineStore(
       layers,
       findLayerById, // 根據 ID 尋找圖層
       getAllLayers, // 獲取所有圖層的扁平陣列
-      loadCityLayers, // 自動載入城市圖層
       selectedFeature, // 選中的地圖要素
       setSelectedFeature, // 設定選中的地圖要素
       mapInstance, // 地圖實例

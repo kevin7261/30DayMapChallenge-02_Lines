@@ -142,31 +142,6 @@ body {
   background-color: transparent !important;
 }
 
-/* 城市專用顏色主題 */
-.my-map-bg-city-beijing-theme {
-  background-color: var(--my-color-city-beijing) !important; /* 北京粉紅色 */
-}
-
-.my-map-bg-city-xian-theme {
-  background-color: var(--my-color-city-xian) !important; /* 西安金黃色 */
-}
-
-.my-map-bg-city-paris-theme {
-  background-color: var(--my-color-city-paris) !important; /* 巴黎紫色 */
-}
-
-.my-map-bg-city-berlin-theme {
-  background-color: var(--my-color-city-berlin) !important; /* 柏林藍色 */
-}
-
-.my-map-bg-city-rome-theme {
-  background-color: var(--my-color-city-rome) !important; /* 羅馬青綠色 */
-}
-
-.my-map-bg-city-washington-theme {
-  background-color: var(--my-color-city-washington) !important; /* 華盛頓深藍色 */
-}
-
 /* =============================================================================
    🏙️ 城市按鈕顏色樣式 (City Button Color Styles)
    ============================================================================= */
@@ -195,33 +170,4 @@ body {
 /* 城市按鈕活躍狀態 */
 .my-city-btn.active {
   background-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* =============================================================================
-   🗺️ 底圖切換按鈕樣式 (Basemap Toggle Button Styles)
-   ============================================================================= */
-
-/* 底圖切換按鈕基礎樣式 */
-.my-basemap-toggle {
-  background-color: transparent !important;
-  border: 1px solid var(--my-color-white) !important;
-  color: var(--my-color-white) !important;
-}
-
-/* 底圖切換按鈕 - 地圖模式（活躍狀態） */
-.my-basemap-toggle-active {
-  background-color: var(--my-color-white) !important;
-  color: var(--my-color-black) !important;
-}
-
-/* 底圖切換按鈕 - 顏色模式（非活躍狀態） */
-.my-basemap-toggle-inactive {
-  background-color: transparent !important;
-  color: var(--my-color-white) !important;
-}
-
-/* 底圖切換按鈕懸停效果 */
-.my-basemap-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.2) !important;
-  color: var(--my-color-white) !important;
 }

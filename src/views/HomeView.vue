@@ -49,43 +49,6 @@
         dataStore.navigateToCity(cityId);
       };
 
-      /**
-       * 🗺️ 切換底圖
-       * 更改地圖的底圖樣式
-       * @param {string} value - 底圖類型值
-       */
-      const setBasemap = (value) => defineStore.setSelectedBasemap(value);
-
-      /**
-       * 🔄 切換底圖模式
-       * 在地圖模式和顏色模式之間切換
-       */
-      const toggleBasemap = () => {
-        if (defineStore.selectedBasemap === 'carto_dark') {
-          // 當前是地圖模式，切換到顏色模式
-          const currentCityLayer = cities.value?.find(
-            (city) => city.layerName === currentCity.value
-          );
-          if (currentCityLayer) {
-            const colorThemeMap = {
-              'city-beijing': 'city-beijing_theme',
-              'city-xian': 'city-xian_theme',
-              'city-paris': 'city-paris_theme',
-              'city-berlin': 'city-berlin_theme',
-              'city-rome': 'city-rome_theme',
-              'city-washington': 'city-washington_theme',
-            };
-            const themeBasemap = colorThemeMap[currentCityLayer.colorName] || 'red_theme';
-            setBasemap(themeBasemap);
-          } else {
-            setBasemap('red_theme');
-          }
-        } else {
-          // 當前是顏色模式，切換到地圖模式
-          setBasemap('carto_dark');
-        }
-      };
-
       // 📊 獲取城市列表
       const cities = computed(() => dataStore.layers[0].groupLayers);
 
@@ -94,16 +57,13 @@
 
       // 🚀 初始化應用程式
       onMounted(() => {
-        // 載入城市數據並導航到西安
-        dataStore.loadCityLayers().then(() => {
-          navigateToCity('Xian');
-        });
+        // 直接導航到西安
+        navigateToCity('Xian');
       });
 
       return {
         setMapInstance,
         navigateToCity,
-        toggleBasemap,
         cities,
         defineStore,
         currentCity,
@@ -137,25 +97,6 @@
                 @click="navigateToCity(city.layerId)"
               >
                 {{ city.layerName }}
-              </button>
-            </div>
-          </div>
-
-          <!-- 🗺️ 底圖選擇區域 -->
-          <div>
-            <div class="d-flex justify-content-center gap-2">
-              <!-- 地圖/顏色切換按鈕 -->
-              <button
-                class="btn align-items-center justify-content-center rounded-circle p-0 my-basemap-toggle"
-                :class="
-                  defineStore.selectedBasemap === 'carto_dark'
-                    ? 'my-basemap-toggle-active'
-                    : 'my-basemap-toggle-inactive'
-                "
-                style="width: 40px; height: 40px"
-                @click="toggleBasemap"
-              >
-                <i class="fas fa-map"></i>
               </button>
             </div>
           </div>
