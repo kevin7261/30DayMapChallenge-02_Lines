@@ -337,7 +337,7 @@
             console.log('[MapTab] 地圖創建成功，開始初始化');
             setBasemap();
             syncLayers();
-            
+
             // 預設顯示西安的街道線條
             setTimeout(() => {
               const xianLayer = dataStore.findLayerById('Xian');

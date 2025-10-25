@@ -222,7 +222,6 @@ DOM 更新
 │   │   └── MapTab.vue               # 地圖組件（核心地圖渲染）
 │   │
 │   ├── 📂 utils/                     # 工具函數
-│   │   ├── dataProcessor.js         # 數據處理（GeoJSON 載入）
 │   │   └── utils.js                 # 通用工具函數
 │   │
 │   ├── 📂 views/                     # 頁面視圖
