@@ -177,31 +177,11 @@
 
       /**
        * 🎨 創建要素圖層
-       * 在 coordinates 的兩個端點創建紅點標記
+       * 不渲染任何視覺元素，僅用於數據管理
        */
-      const createFeatureLayer = (layer) => {
-        if (!layer.coordinates || layer.coordinates.length < 2) return null;
-
-        // 創建圖層組，用於包含多個點標記
-        const layerGroup = L.layerGroup([]);
-
-        // 為每個座標點創建紅色圓形標記
-        layer.coordinates.forEach((coord) => {
-          const [lng, lat] = coord;
-
-          // 創建紅色圓形標記
-          const circleMarker = L.circleMarker([lat, lng], {
-            radius: 2, // 圓點半徑
-            fillColor: 'red', // 填充顏色
-            fillOpacity: 1, // 填充不透明度
-            stroke: false, // 不顯示邊框
-          });
-
-          // 將標記添加到圖層組
-          layerGroup.addLayer(circleMarker);
-        });
-
-        return layerGroup;
+      const createFeatureLayer = () => {
+        // 返回空圖層組，不顯示任何視覺元素
+        return L.layerGroup([]);
       };
 
       /**
